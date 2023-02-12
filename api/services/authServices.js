@@ -1,25 +1,25 @@
 const { v4: uuidv4 } = require("uuid");
 const { Password } = require("../middleware/passwordHash");
 const { User, Session } = require("../models/index");
-const { validate } = require("../helper/dataValidation");
+const { Validate } = require("../helper/dataValidation");
 
 class AuthService {
   static async create(username, email, password) {
     try {
-      const validateUsername = await validate.username(username);
+      const validateUsername = await Validate.username(username);
       if (!validateUsername)
         return {
           status: "error",
           data: { message: "Name does not follow guidelines", code: 400 },
         };
-      const validateEmail = await validate.email(email);
+      const validateEmail = await Validate.email(email);
       if (!validateEmail) {
         return {
           status: "error",
           data: { message: "Email does not follow guidelines", code: 400 },
         };
       }
-      const validatePassword = await validate.password(password);
+      const validatePassword = await Validate.password(password);
       if (!validatePassword) {
         return {
           status: "error",
@@ -49,7 +49,7 @@ class AuthService {
 
   static async login(username, password, ip_adress) {
     try {
-      const validateSpecialChar = await validate.specialChar(username);
+      const validateSpecialChar = await Validate.specialChar(username);
       if (!validateSpecialChar)
         return {
           status: "error",

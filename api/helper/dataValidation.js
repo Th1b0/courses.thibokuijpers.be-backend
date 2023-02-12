@@ -1,4 +1,4 @@
-class validate {
+class Validate {
   static username(username) {
     return new Promise((resolve, reject) => {
       if (!username || username.trim() === "") {
@@ -60,4 +60,4 @@ class validate {
     });
   }
 }
-module.exports = { validate };
+module.exports = { Validate };
