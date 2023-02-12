@@ -1,10 +1,9 @@
-const { Session } = require("../models");
+const { Session } = require("../models/authModel");
 
 const authenticate = async (req, res, next) => {
   const session_id = req.signedCookies.session_id;
   const device_id = req.signedCookies.device_id;
   const ip_adress = req.ip;
-  console.log(req.signedCookies);
   if (!session_id || !device_id)
     return res.status(401).json({
       status: "error",

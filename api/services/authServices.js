@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const { Password } = require("../middleware/passwordHash");
-const { User, Session } = require("../models/index");
+const db = require("../models/authModel");
 const { Validate } = require("../helper/dataValidation");
 
 class AuthService {
@@ -26,10 +26,10 @@ class AuthService {
           data: { message: "Password does not follow guidelines", code: 400 },
         };
       }
-      const existingUser = await User.get(username);
+      const existingUser = await db.User.get(username);
       if (existingUser.length === 0) {
         const hash = await Password.hash(password);
-        await User.create(username, email, hash, "email");
+        await db.User.create(username, email, hash, "email");
         return {
           status: "success",
           data: { message: "User created successfully", code: 200 },
@@ -55,7 +55,7 @@ class AuthService {
           status: "error",
           data: { message: "Username cant contains special chars", code: 400 },
         };
-      const [getUserHashId] = await User.login(username);
+      const [getUserHashId] = await db.User.login(username);
       try {
         const userId = getUserHashId.user_id;
         const hash = getUserHashId.hash;
@@ -64,7 +64,7 @@ class AuthService {
           const expires = new Date(Date.now() + 2592000000);
           const session_id = uuidv4();
           const device_id = uuidv4();
-          await Session.create(
+          await db.Session.create(
             session_id,
             userId,
             expires,
@@ -96,7 +96,7 @@ class AuthService {
 
   static async logout(session_id, device_id) {
     try {
-      await Session.invalidate(session_id, device_id);
+      await db.Session.invalidate(session_id, device_id);
       return {
         status: "success",
         data: { message: "Logged out successfully", code: 200 },

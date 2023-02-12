@@ -64,7 +64,7 @@ class Session {
   }
 
   static get(session_id, ip_address, device_id) {
-    const sqlQuery = `SELECT * FROM sessions WHERE session_id = ? AND ip_adress = ? AND device_id = ? AND expires > NOW() AND valid = 1`;
+    const sqlQuery = `SELECT * FROM sessions WHERE session_id = ? AND ip_adress = ? AND device_id = ? AND expires > NOW() AND valid = true`;
     return new Promise((resolve, reject) => {
       connection.query(
         sqlQuery,
@@ -77,6 +77,18 @@ class Session {
           }
         }
       );
+    });
+  }
+  static invalidate(session_id, device_id) {
+    const sqlQuery = `UPDATE sessions SET valid = false WHERE session_id = ? AND device_id = ?`;
+    return new Promise((resolve, reject) => {
+      connection.query(sqlQuery, [session_id, device_id], (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
     });
   }
 }
